@@ -1,14 +1,18 @@
 {
-  "name": "knaturopathy-backend",
+  "name": "knaturopathy",
   "version": "1.0.0",
-  "description": "Backend KNaturopathy - API plantes & symptômes",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "main": "index.js",
   "dependencies": {
-    "better-sqlite3": "^12.9.0",
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
-  }
+    "expo": "~57.0.4",
+    "expo-status-bar": "~57.0.0",
+    "react": "19.2.3",
+    "react-native": "0.86.0"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
 }
