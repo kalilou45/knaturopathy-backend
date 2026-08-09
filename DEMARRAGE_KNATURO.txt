@@ -1,0 +1,45 @@
+========================================
+KNATUROPATHY - KIT DE SURVIE
+Dernière mise à jour : 08/08/2026
+========================================
+
+## ARCHITECTURE
+- Frontend : React Native (Expo) → Port 8081 (scan QR)
+- Backend Node : Express → Port 3000 (http://192.168.1.134:3000)
+- Agent Python : Flask + Mistral:7b → Port 5001 (http://192.168.1.134:5001)
+- Ollama : LLM local → Port 11434 (localhost)
+
+## FICHIERS CLÉS
+- App principale : ~/Desktop/KNaturopathy/App.js
+- Backend : ~/Desktop/KNaturopathy/backend/server.js
+- Agent RAG : ~/Desktop/KNaturopathy/backend/agent_server.py
+- Symptômes : ~/Desktop/KNaturopathy/backend/symptomes.js
+- Base SQLite : ~/Desktop/KNaturopathy/backend/data/database.db
+- Fiches plantes : 98 plantes dans table 'plants'
+- Formation OCR : 6 modules dans table 'who_chunks'
+- Fichiers source OCR : ~/Desktop/Formation_Naturo_OCR/*.txt
+
+## ENDPOINTS BACKEND (Port 3000)
+- GET /api/plants → liste toutes les plantes
+- GET /api/search?q= → recherche par nom
+- GET /api/plantes/symptome?q= → recherche par symptôme
+- GET /api/symptomes → liste des symptômes
+
+## ENDPOINTS AGENT (Port 5001)
+- POST /api/agent → body: {"question":"..."}
+- GET /api/health → vérifie l'état
+
+## LANCEMENT (1 commande)
+~/Desktop/KNaturopathy/start-knaturo.sh
+→ Ouvre 4 terminaux : Ollama, Backend, Agent, Expo
+
+## DÉPANNAGE
+- Si 404 sur /api/plantes/symptome → vérifier que server.js tourne sur :3000
+- Si "db.all is not a function" → backend utilise better-sqlite3 (synchrone)
+- Si agent répond "Je suis un assistant virtuel" → vérifier who_chunks n'est pas vide
+- Si téléphone ne voit pas agent → vérifier IP 192.168.1.134 dans AssistantScreen.js
+
+## MODÈLE OLLAMA
+- Nom : mistral:7b
+- Taille : 4.4 GB
+- Commande : ollama list
