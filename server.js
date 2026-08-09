@@ -111,8 +111,6 @@ app.post('/ask', async (req, res) => {
     res.status(500).json({ reponse: "L'assistant naturopathe est temporairement indisponible. Veuillez réessayer plus tard." });
   }
 });
-  }
-});
 // ===== SYMPTOMES MAPPING =====
 const { rechercherParSymptome, getTousSymptomes, normaliser } = require('./symptomes');
 
