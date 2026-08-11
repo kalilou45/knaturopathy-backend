@@ -1,0 +1,46 @@
+=== SUIVI KNATUROPATHY ===
+Dernière mise à jour: 2026-08-11
+Projet: KNaturopathy (Expo + Node backend + Mistral API)
+
+--- ARCHITECTURE ---
+- Frontend: React Native (Expo Go) → ~/Desktop/KNaturopathy/
+- Backend: Node.js sur Render → https://knaturopathy-backend.onrender.com
+- IA: Mistral API (open-mistral-nemo) via variable MISTRAL_API_KEY
+- Base de données: SQLite (98 plantes) dans backend/data/database.db
+
+--- CE QUI FONCTIONNE ---
+✅ Splash screen animé avec logo + lierres/bulles vertes
+✅ Logo dans le header de l'accueil (K Naturopathy)
+✅ Coach "K Naturo" dans AssistantScreen (logo + titre sobre #1B4332)
+✅ Backend Render cloud avec API Mistral
+✅ Réponses IA en français avec plantes de la base
+✅ Swipe vers la droite pour revenir en arrière (AssistantScreen)
+✅ Padding iPhone (60px) pour éviter l'encoche
+✅ Logo qui tourne quand K Naturo réfléchit
+✅ Favoris fonctionnels
+✅ Recherche par symptômes
+
+--- FICHIERS CLÉS MODIFIÉS ---
+- App.js (header avec logo, splash screen, API_URL Render)
+- screens/AssistantScreen.js (K Naturo, swipe, loader logo)
+- screens/SplashScreen.js (animation logo + lierres)
+- backend/server.js (route /ask avec Mistral API)
+- backend/ (dossier complet sur GitHub, pas submodule)
+
+--- PROCHAINES TÂCHES ---
+1. Historique des conversations (AsyncStorage)
+2. Mode hors-ligne (cache plantes)
+3. EAS Build (app standalone ~5€/mois)
+4. Notifications push (plus tard)
+
+--- COMMANDES UTILES ---
+Lancer l'app: cd ~/Desktop/KNaturopathy && npx expo start --clear
+Test backend: curl -X POST https://knaturopathy-backend.onrender.com/ask -H "Content-Type: application/json" -d '{"question":"..."}'
+
+--- INFOS RENDER ---
+- Service: knaturopathy-backend
+- Branch: master
+- Root Directory: backend
+- Build: npm install
+- Start: node server.js
+- Clé API: MISTRAL_API_KEY configurée

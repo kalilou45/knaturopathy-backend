@@ -1,3 +1,5 @@
+import SplashScreen from './screens/SplashScreen';
+
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, FlatList, Image, TouchableOpacity, StyleSheet,
@@ -12,6 +14,8 @@ export default function App() {
   const [plants, setPlants] = useState([]);
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  const [showSplash, setShowSplash] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('home');
@@ -194,6 +198,10 @@ const getImage = (imageFile) => {
   };
 
   if (loading) {
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#4CAF50" />
@@ -234,6 +242,10 @@ const getImage = (imageFile) => {
         )}
 
 if (view === 'detail' && selectedPlant) {
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+
     return (
       <ScrollView style={styles.container}>
         <TouchableOpacity onPress={() => setView('home')} style={styles.backButton}>
@@ -268,9 +280,16 @@ if (view === 'detail' && selectedPlant) {
     );
   }
 
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🌿 K Naturopathy</Text>
+      <View style={styles.headerContainer}>
+        <Image source={require('./assets/logo.jpeg')} style={styles.headerLogo} />
+        <Text style={styles.header}>K Naturopathy</Text>
+      </View>
       <Text style={styles.subHeader}>La clé de ta santé naturelle</Text>
 
       <TouchableOpacity onPress={() => setViewAssistant(true)} style={styles.assistantButton}>
@@ -317,7 +336,9 @@ if (view === 'detail' && selectedPlant) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F5F5F5', paddingTop: 50, paddingHorizontal: 16 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { fontSize: 32, fontWeight: 'bold', color: '#4CAF50', textAlign: 'center' },
+  headerContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 15, marginBottom: 5 },
+  headerLogo: { width: 42, height: 42, borderRadius: 21, marginRight: 12, borderWidth: 2, borderColor: '#2D6A4F' },
+  header: { fontSize: 28, fontWeight: '700', color: '#1B4332', textAlign: 'center', letterSpacing: 1 },
   subHeader: { fontSize: 16, color: '#666', textAlign: 'center', marginBottom: 10 },
   assistantButton: { backgroundColor: '#4CAF50', padding: 12, borderRadius: 25, marginBottom: 15, alignItems: 'center' },
   assistantButtonText: { color: '#fff', fontWeight: 'bold' },
