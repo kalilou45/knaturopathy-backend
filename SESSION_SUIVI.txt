@@ -44,3 +44,20 @@ Test backend: curl -X POST https://knaturopathy-backend.onrender.com/ask -H "Con
 - Build: npm install
 - Start: node server.js
 - Clé API: MISTRAL_API_KEY configurée
+
+
+=== PAUSE - 11/08/2026 ===
+En attente: Inscription Apple Developer Program (99$/an)
+Problème: Paiement bancaire en cours de résolution
+Prochaine étape: Revenir ici quand le compte Apple Developer est actif
+Puis: npx eas-cli build --platform ios --profile development
+
+
+=== BUILD iOS RÉUSSI - 11/08/2026 ===
+✅ Apple Developer Program actif (Kaled TAOUFIK)
+✅ Build EAS iOS development réussi (3m 57s)
+✅ App installée sur iPhone (iphone kalilou)
+✅ Mode développeur activé
+✅ Serveur Metro connecté (192.168.1.134:8081)
+✅ Interface complète fonctionnelle
+Prochaine étape: Tester toutes les fonctionnalités
