@@ -2,7 +2,7 @@
   "expo": {
     "name": "K Naturopathy",
     "slug": "knaturopathy",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,20 +31,10 @@
         "projectId": "910e95be-0217-497c-ac3c-beab60333bbf"
       }
     },
-    "plugins": [
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#2E7D32",
-          "image": "./assets/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "dark": {
-            "backgroundColor": "#2E7D32",
-            "image": "./assets/splash-icon.png"
-          }
-        }
-      ]
-    ]
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2E7D32"
+    }
   }
 }
