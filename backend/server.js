@@ -13,6 +13,25 @@ app.use(express.json());
 const dbPath = path.join(__dirname, 'data/database.db');
 const db = new Database(dbPath);
 
+// ===== TABLES CONVERSATIONS =====
+db.exec(`
+  CREATE TABLE IF NOT EXISTS conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT NOT NULL,
+    title TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+  );
+`);
+
 app.use('/real', express.static(path.join(__dirname, '../assets/real')));
 
 // Normalisation : minuscules + sans accents
@@ -49,14 +68,29 @@ app.get('/api/search', (req, res) => {
 });
 
 app.post('/ask', async (req, res) => {
-  const { question } = req.body;
+  const { question, conversation_id, device_id } = req.body;
   console.log('Question reçue (backend):', question);
   
   if (!question || question.trim().length === 0) {
     return res.status(400).json({ reponse: "Veuillez poser une question." });
   }
 
+  let convId = conversation_id;
+
   try {
+    // Créer une nouvelle conversation si besoin
+    if (!convId && device_id) {
+      const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
+      const result = db.prepare('INSERT INTO conversations (device_id, title) VALUES (?, ?)').run(device_id, title);
+      convId = result.lastInsertRowid;
+    }
+
+    // Sauvegarder la question
+    if (convId) {
+      db.prepare('INSERT INTO messages (conversation_id, role, content) VALUES (?, ?, ?)')
+        .run(convId, 'user', question);
+    }
+
     const allPlants = db.prepare('SELECT * FROM plants').all();
     const searchNormalized = normalize(question);
     const keywords = searchNormalized.split(/\s+/).filter(k => k.length > 2);
@@ -105,12 +139,65 @@ app.post('/ask', async (req, res) => {
     const data = await mistralResponse.json();
     const reponse = data.choices?.[0]?.message?.content || "Désolé, je n'ai pas pu générer de réponse.";
     
-    res.json({ reponse });
+    // Sauvegarder la réponse
+    if (convId) {
+      db.prepare('INSERT INTO messages (conversation_id, role, content) VALUES (?, ?, ?)')
+        .run(convId, 'assistant', reponse);
+      db.prepare('UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(convId);
+    }
+    
+    res.json({ reponse, conversation_id: convId });
   } catch (error) {
     console.error('Erreur appel IA:', error.message);
     res.status(500).json({ reponse: "L'assistant naturopathe est temporairement indisponible. Veuillez réessayer plus tard." });
   }
 });
+// ===== CONVERSATIONS =====
+app.post('/api/conversations', (req, res) => {
+  const { device_id, title } = req.body;
+  if (!device_id) return res.status(400).json({ error: 'device_id requis' });
+  try {
+    const result = db.prepare('INSERT INTO conversations (device_id, title) VALUES (?, ?)').run(device_id, title || 'Nouvelle conversation');
+    res.json({ id: result.lastInsertRowid, device_id, title });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/conversations', (req, res) => {
+  const { device_id } = req.query;
+  if (!device_id) return res.status(400).json({ error: 'device_id requis' });
+  try {
+    const conversations = db.prepare('SELECT * FROM conversations WHERE device_id = ? ORDER BY updated_at DESC').all(device_id);
+    res.json(conversations);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/conversations/:id/messages', (req, res) => {
+  const { id } = req.params;
+  try {
+    const messages = db.prepare('SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC').all(id);
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/conversations/:id/messages', (req, res) => {
+  const { id } = req.params;
+  const { role, content } = req.body;
+  if (!role || !content) return res.status(400).json({ error: 'role et content requis' });
+  try {
+    db.prepare('INSERT INTO messages (conversation_id, role, content) VALUES (?, ?, ?)').run(id, role, content);
+    db.prepare('UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ===== SYMPTOMES MAPPING =====
 const { rechercherParSymptome, getTousSymptomes, normaliser } = require('./symptomes');
 

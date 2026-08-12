@@ -6,6 +6,8 @@ import {
   TextInput, ActivityIndicator, ScrollView
 } from 'react-native';
 import AssistantScreen from './screens/AssistantScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import Constants from 'expo-constants';
 import { Share } from 'react-native';
 
 const API_URL = 'https://knaturopathy-backend.onrender.com';
@@ -20,6 +22,8 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('home');
   const [viewAssistant, setViewAssistant] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [deviceId] = useState(() => Constants.installationId || Constants.deviceId || 'guest_' + Math.random().toString(36).substr(2, 9));
 
   useEffect(() => {
     fetchPlants();
@@ -210,7 +214,12 @@ const getImage = (imageFile) => {
   }
 
   if (viewAssistant) {
-    return <AssistantScreen onBack={() => setViewAssistant(false)} />;
+    return <AssistantScreen 
+      onBack={() => { setViewAssistant(false); setActiveConversationId(null); }}
+      onShowHistory={() => { setViewAssistant(false); setView('history'); }}
+      conversationId={activeConversationId}
+      deviceId={deviceId}
+    />;
   }
 
   
@@ -305,6 +314,10 @@ if (view === 'detail' && selectedPlant) {
         <Text style={styles.favNavButtonText}>❤️ Mes Favoris ({favorites.length})</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.historyNavButton} onPress={() => setView('history')}>
+        <Text style={styles.historyNavButtonText}>📜 Historique des discussions</Text>
+      </TouchableOpacity>
+
       <FlatList extraData={favorites}
         data={plants}
         keyExtractor={(item) => item.id.toString()}
@@ -357,5 +370,7 @@ const styles = StyleSheet.create({
 
   favNavButton: { backgroundColor: '#FFF', borderWidth: 2, borderColor: '#C75B39', padding: 12, borderRadius: 25, marginTop: 10, alignItems: 'center', marginHorizontal: 20, marginBottom: 10 },
   favNavButtonText: { color: '#C75B39', fontWeight: 'bold', fontSize: 16 },
+  historyNavButton: { backgroundColor: '#FFF', borderWidth: 2, borderColor: '#2D6A4F', padding: 12, borderRadius: 25, marginTop: 10, alignItems: 'center', marginHorizontal: 20, marginBottom: 10 },
+  historyNavButtonText: { color: '#2D6A4F', fontWeight: 'bold', fontSize: 16 },
 
 });
