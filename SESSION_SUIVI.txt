@@ -61,3 +61,15 @@ Puis: npx eas-cli build --platform ios --profile development
 ✅ Serveur Metro connecté (192.168.1.134:8081)
 ✅ Interface complète fonctionnelle
 Prochaine étape: Tester toutes les fonctionnalités
+
+
+=== SESSION 11/08/2026 - BUILD iOS RÉUSSI ===
+✅ Apple Developer Program actif (Kaled TAOUFIK - MXN3FCB5N2)
+✅ iPhone enregistré sur Apple Developer (iphone kalilou)
+✅ Build EAS development réussi et testé
+✅ Build EAS preview standalone réussi et installé
+✅ App fonctionne sans Mac allumé (backend Render + Mistral API)
+✅ Icône app = logo KNaturopathy
+⚠️ À faire: Centrer le logo sur le splash screen iOS
+   Solution: Configurer expo-splash-screen avec safe area iOS
+Prochaine étape: Finaliser le splash screen + build production
