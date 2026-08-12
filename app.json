@@ -2,7 +2,7 @@
   "expo": {
     "name": "K Naturopathy",
     "slug": "knaturopathy",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,7 +32,7 @@
       }
     },
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash-ios-final.png",
       "resizeMode": "contain",
       "backgroundColor": "#2E7D32"
     }
