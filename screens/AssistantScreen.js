@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ScrollView, Image, PanResponder,
+  ScrollView, Image, PanResponder, KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
 import Constants from 'expo-constants';
 
@@ -13,6 +13,21 @@ export default function AssistantScreen({ onBack, conversationId, onShowHistory,
   const [loading, setLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(conversationId);
   const scrollViewRef = useRef(null);
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (loading) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinValue.setValue(0);
+    }
+  }, [loading]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -75,6 +90,11 @@ export default function AssistantScreen({ onBack, conversationId, onShowHistory,
     }
   };
 
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
   const startNewConversation = () => {
     setCurrentConversationId(null);
     setMessages([]);
@@ -82,7 +102,12 @@ export default function AssistantScreen({ onBack, conversationId, onShowHistory,
   };
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={90}
+      {...panResponder.panHandlers}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.headerButton}>
           <Text style={styles.headerButtonText}>←</Text>
@@ -117,6 +142,10 @@ export default function AssistantScreen({ onBack, conversationId, onShowHistory,
         ))}
         {loading && (
           <View style={styles.loadingBubble}>
+            <Animated.Image
+              source={require('../assets/logo.jpeg')}
+              style={[styles.loaderLogo, { transform: [{ rotate: spin }] }]}
+            />
             <Text style={styles.loadingText}>K Naturo réfléchit...</Text>
           </View>
         )}
@@ -143,7 +172,7 @@ export default function AssistantScreen({ onBack, conversationId, onShowHistory,
       <TouchableOpacity style={styles.newConvButton} onPress={startNewConversation}>
         <Text style={styles.newConvButtonText}>+ Nouvelle conversation</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -167,6 +196,7 @@ const styles = StyleSheet.create({
   assistantText: { color: '#333', fontSize: 15, lineHeight: 20 },
   loadingBubble: { alignSelf: 'flex-start', backgroundColor: '#E8F5E9', padding: 10, borderRadius: 12, marginBottom: 10 },
   loadingText: { color: '#2D6A4F', fontStyle: 'italic' },
+  loaderLogo: { width: 50, height: 50, borderRadius: 25, marginBottom: 8 },
   inputContainer: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 12, paddingVertical: 8,
