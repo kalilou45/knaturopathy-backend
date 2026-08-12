@@ -197,11 +197,11 @@ const getImage = (imageFile) => {
     return null;
   };
 
-  if (loading) {
   if (showSplash) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
   }
 
+  if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#4CAF50" />
@@ -242,10 +242,6 @@ const getImage = (imageFile) => {
         )}
 
 if (view === 'detail' && selectedPlant) {
-  if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
-  }
-
     return (
       <ScrollView style={styles.container}>
         <TouchableOpacity onPress={() => setView('home')} style={styles.backButton}>
@@ -278,10 +274,6 @@ if (view === 'detail' && selectedPlant) {
         </View>
       </ScrollView>
     );
-  }
-
-  if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />;
   }
 
   return (

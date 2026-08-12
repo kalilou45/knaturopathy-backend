@@ -1,18 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 
-export default function SplashScreen({ onFinish }) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onFinish();
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, [onFinish]);
-
+export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Image 
-        source={require('../assets/logo.jpeg')} 
+        source={require('./assets/logo.jpeg')} 
         style={styles.logo}
         resizeMode="contain"
       />
@@ -28,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
   },
 });
